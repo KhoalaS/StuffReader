@@ -1,0 +1,17 @@
+.venv
+test/*
+node_modules
+.vscode
+
+extensions/*.py
+!extensions/__init__.py
+
+__pycache__
+**/__pycache__
+data.db
+static/svg
+static/pdf
+static/eps
+static/png
+static/webfont
+static/*.zip

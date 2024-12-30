@@ -1,0 +1,8 @@
+<div class="flex gap-2">
+    {% for gallery in galleries %}
+    <a href="/@{{handle}}/g/{{gallery.id}}" class="h-[300px] w-[210px]">
+        <img class="h-[294px] min-w-[210px]" src="{{gallery.thumbnail}}" />
+        <div class="line-clamp-2">{{gallery.title}}</div>
+    </a>
+    {% endfor %}
+</div>

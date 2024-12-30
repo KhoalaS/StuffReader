@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS cookies (handle TEXT, key TEXT, value TEXT);

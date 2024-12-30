@@ -1,0 +1,73 @@
+{% extends "base.html" %} {% block body %} {% if
+extension.scroll_direction.value == 1 %}
+<div id="viewer-content" class="h-full overflow-y-scroll scroll-smooth"></div>
+<script>
+    let images = [];
+    let start = 0;
+    let done = false;
+    const batchSize = 5;
+
+    const viewerContent = document.querySelector("#viewer-content");
+
+    const options = {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.3,
+    };
+
+    const callback = (entries, observer) => {
+        entries.forEach((entry) => {
+            // Each entry describes an intersection change for one observed
+            // target element:
+            //   entry.boundingClientRect
+            //   entry.intersectionRatio
+            //   entry.intersectionRect
+            //   entry.isIntersecting
+            //   entry.rootBounds
+            //   entry.target
+            //   entry.time
+            if (entry.isIntersecting) {
+                observer.disconnect();
+                addImages();
+            }
+        });
+    };
+
+    const observer = new IntersectionObserver(callback, options);
+
+    function addImages() {
+        for (let i = start; i < images.length; i++) {
+            if (i == start + batchSize) {
+                break;
+            }
+            const img = document.createElement("img");
+            img.setAttribute("loading", "lazy");
+            img.src = images[i];
+            if (!done && i == start + batchSize - 2) {
+                img.addEventListener("load", () => {
+                    observer.observe(img);
+                });
+            }
+            viewerContent.appendChild(img);
+        }
+        start += batchSize;
+    }
+    async function load() {
+        const res = await fetch("{{image_url}}");
+        if (res.status != 200) {
+            return;
+        }
+
+        images = await res.json();
+        done = images.length < batchSize;
+        const numImages = done ? images.length : start + batchSize;
+
+        addImages();
+    }
+
+    load();
+</script>
+{% else %}
+<div class="m-4">Horizontal Content</div>
+
+{% endif %} {% endblock %}

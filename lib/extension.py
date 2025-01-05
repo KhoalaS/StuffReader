@@ -97,6 +97,9 @@ class Extension:
     def fetchGallery(self, id: str) -> Gallery:
         raise NotImplementedError("Subclasses must override fetchGallery.")
 
+    def fetchImages(self, id: str, chapter: str | None):
+        return self.fetchGallery(id).images
+
     def search() -> list[DisplayGallery]:
         pass
 
@@ -108,8 +111,8 @@ class Extension:
 
     def getSoup(self, path: str, method="GET") -> BeautifulSoup:
         # TODO
-        #o = open("test/wt.html").read()
-        #return BeautifulSoup(o, "html.parser")
+        # o = open("test/wt.html").read()
+        # return BeautifulSoup(o, "html.parser")
 
         path = path if path[0] == "/" else "/"+path
         url = "{}{}".format(self.base_url, path)
@@ -117,6 +120,10 @@ class Extension:
         if res.status_code == 200:
             return BeautifulSoup(res.text, "html.parser")
         else:
+            ts = int(time.time_ns()/1000)
+            o = open("log/{}.log".format(ts), "wb+")
+            o.write(res.content)
+            o.close()
             Console.Error("could not fetch", url)
             return None
 

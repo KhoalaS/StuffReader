@@ -25,11 +25,13 @@ def gallery(ext_handle: str, id: int):
 
 @app.get("/@<ext_handle>/v/<id>")
 def viewer(ext_handle: str, id: str):
+    chapter = request.args.get("chapter")
+
     if registry.getExtension(ext_handle) == None:
         return render_template("error.html")
     else:
         ext = registry.getExtension(ext_handle)
-        image_url = "/@{}/i/{}".format(ext_handle, id)
+        image_url = "/@{}/i/{}?chapter={}".format(ext_handle, id, chapter)
         return render_template("viewer.html", extension=ext, image_url=image_url)
 
 
@@ -41,8 +43,7 @@ def images(ext_handle: str, id: str):
         return render_template("error.html")
     else:
         ext = registry.getExtension(ext_handle)
-        gallery = ext.fetchGallery(id, chapter)
-        return gallery.images
+        return ext.fetchImages(id, chapter)
 
 
 @app.get("/@<ext_handle>/home")

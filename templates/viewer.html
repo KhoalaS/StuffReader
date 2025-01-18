@@ -60,14 +60,107 @@ extension.scroll_direction.value == 1 %}
 
         images = await res.json();
         done = images.length < batchSize;
-        const numImages = done ? images.length : start + batchSize;
-
         addImages();
     }
 
     load();
 </script>
 {% else %}
-<div class="m-4">Horizontal Content</div>
+<div id="viewer-content">
+    <div class="relative h-fit">
+        <div
+            onclick="back()"
+            class="absolute w-[50%] left-0 h-full bg-red-500 bg-opacity-20"
+        ></div>
+        <div
+            onclick="forward()"
+            class="absolute w-[50%] right-0 h-full bg-green-500 bg-opacity-20"
+        ></div>
+        <img class="viewer-image" />
+    </div>
+    <div><span id="current-page"></span>/<span id="max-page"></span></div>
+</div>
+<script>
+    let images = [];
+    let current = 0;
+    let done = false;
+    const batchSize = 3;
+
+    /** @type {Set<number>} */
+    const cached = new Set();
+
+    const viewerContent = document.querySelector("#viewer-content");
+    const viewerImage = viewerContent.querySelector(".viewer-image");
+
+    const currentPageSpan = document.getElementById("current-page");
+    const maxPageSpan = document.getElementById("max-page");
+
+    async function init() {
+        currentPageSpan.innerText = 1;
+
+        const res = await fetch("{{image_url}}");
+        if (res.status != 200) {
+            return;
+        }
+
+        images = await res.json();
+        maxPageSpan.innerText = images.length;
+
+        done = images.length < batchSize;
+        const numImages = done ? images.length : current + batchSize;
+        for (let i = 0; i < numImages; i++) {
+            const img = new Image();
+            img.src = images[i];
+            cached.add(i);
+        }
+        viewerImage.src = images[0];
+    }
+
+    function forward() {
+        if (current == images.length - 1) {
+            return;
+        }
+
+        current++;
+        viewerImage.src = images[current];
+        cached.add(current);
+        currentPageSpan.innerText = current + 1;
+
+        const n =
+            current + batchSize > images.length
+                ? images.length
+                : current + batchSize;
+
+        for (let i = current + 1; i < n; i++) {
+            if (!cached.has(i)) {
+                const img = new Image();
+                img.src = images[i];
+                cached.add(i);
+            }
+        }
+    }
+
+    function back() {
+        if (current == 0) {
+            return;
+        }
+
+        current--;
+        viewerImage.src = images[current];
+        cached.add(current);
+        currentPageSpan.innerText = current + 1;
+
+        const n = current - batchSize < 0 ? -1 : current - batchSize;
+
+        for (let i = current - 1; i > n; i--) {
+            if (!cached.has(i)) {
+                const img = new Image();
+                img.src = images[i];
+                cached.add(i);
+            }
+        }
+    }
+    init();
+</script>
 
 {% endif %} {% endblock %}

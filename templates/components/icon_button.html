@@ -1,0 +1,13 @@
+{% if state %}
+<img
+    id="{{icon}}-icon"
+    class="inline-block"
+    src="/static/svg/filled/{{icon}}.svg"
+/>
+{%else%}
+<img
+    id="{{icon}}-icon"
+    class="inline-block"
+    src="/static/svg/outline/{{icon}}.svg"
+/>
+{% endif %}

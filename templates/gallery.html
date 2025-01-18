@@ -1,9 +1,20 @@
 {% extends "base.html" %} {% block body %}
+<style>
+    .htmx-indicator {
+        display: none;
+    }
+    .htmx-request .htmx-indicator {
+        display: inline;
+    }
+    .htmx-request.htmx-indicator {
+        display: inline;
+    }
+</style>
 <div class="m-4">
     <div class="flex justify-start">
         <div class="w-full">
             <h1 class="text-xl font-bold">{{gallery.title}}</h1>
-            <a href="about:blank" class="underline">#{{gallery.id}}</a>
+            <a class="underline">#{{gallery.id}}</a>
             <img class="w-full" src="{{gallery.thumbnail}}" />
             <div class="flex flex-col gap-4 my-4">
                 {% for label, tag_list in gallery.tags.items() %}
@@ -36,23 +47,43 @@
                 {% endfor %}
             </div>
             {% else %}
-            <div>Pages: {{gallery.pages}}</div>
+            <div class="font-bold">Pages: {{gallery.pages}}</div>
             {% endif %}
             <div class="mt-4">
+                <a href="/@{{ext_handle}}/v/{{id}}">
+                    <button
+                        class="items-center bg-white text-black rounded-md px-4 py-2"
+                    >
+                        <img
+                            class="inline-block"
+                            src="/static/svg/filled/player-play.svg"
+                        />
+                        <span>Start</span>
+                    </button>
+                </a>
                 <button
-                    class="items-center bg-white text-black rounded-md px-4 py-2"
+                    hx-trigger="click"
+                    hx-post="/@{{ext_handle}}/{{id}}/bookmark"
+                    hx-swap="outerHTML"
+                    hx-target="#bookmark-icon"
+                    hx-indicator="#bookmark-indicator"
+                    class="bg-white text-black rounded-md px-4 py-2"
                 >
+                    {%with state=state.bookmarked, icon="bookmark" %} {% include
+                    "components/icon_button.html" %} {%endwith%}
+                    <img
+                        class="htmx-indicator animate-spin"
+                        id="bookmark-indicator"
+                        src="/static/svg/outline/refresh.svg"
+                    />
+                    <span>Bookmark</span>
+                </button>
+                <button class="bg-white text-black rounded-md px-4 py-2">
                     <img
                         class="inline-block"
-                        src="/static/svg/filled/player-play.svg"
+                        src="/static/svg/outline/circle-check.svg"
                     />
-                    <span>Start</span>
-                </button>
-                <button class="bg-white text-black rounded-md px-4 py-2">
-                    Bookmark
-                </button>
-                <button class="bg-white text-black rounded-md px-4 py-2">
-                    Completed
+                    <span> Complete </span>
                 </button>
             </div>
         </div>

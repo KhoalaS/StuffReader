@@ -1,6 +1,7 @@
 import sqlite3
 from lib.registry import Registry
-from flask import Flask, render_template, request, make_response
+from lib.gallery_state import DbService
+from flask import Flask, g, render_template, request, make_response
 from requests import session
 from extensions import webtoons
 
@@ -8,6 +9,7 @@ con = sqlite3.connect("./data.db")
 
 registry = Registry()
 registry.register(webtoons.Ext(con))
+db_service = DbService()
 
 app = Flask(__name__)
 
@@ -22,7 +24,9 @@ def gallery(ext_handle: str, id: int):
         return render_template("error.html")
     else:
         gallery = registry.getExtension(ext_handle).fetchGallery(id)
-        return render_template("gallery.html", gallery=gallery, ext_handle=ext_handle, id=id)
+        state = db_service.getState(ext_handle, id)
+
+        return render_template("gallery.html", gallery=gallery, ext_handle=ext_handle, id=id, state=state)
 
 
 @app.get("/@<ext_handle>/v/<id>")
@@ -95,3 +99,26 @@ def image_proxy():
     response = make_response(res.content)
     response.headers["Cache-Control"] = "max-age=604800"
     return response
+
+
+@app.get("/ac")
+def admin_console():
+    return render_template("admin.html")
+
+
+@app.post("/@<ext_handle>/<id>/bookmark")
+def bookmark(ext_handle: str, id: str):
+    if registry.getExtension(ext_handle) is None:
+        return render_template("error.html")
+    else:
+        state = db_service.getState(ext_handle, id)
+        db_service.setBookmark(
+            ext_handle, id, (not state["bookmarked"]))
+        return render_template("components/icon_button.html", state=not state["bookmarked"], icon="bookmark")
+
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()

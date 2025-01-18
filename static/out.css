@@ -567,6 +567,10 @@ video {
   margin-bottom: 1rem;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
 .line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
@@ -612,6 +616,10 @@ video {
 
 .w-\[210px\] {
   width: 210px;
+}
+
+.w-full {
+  width: 100%;
 }
 
 .min-w-\[210px\] {

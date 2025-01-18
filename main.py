@@ -2,10 +2,12 @@ import sqlite3
 from lib.registry import Registry
 from flask import Flask, render_template, request, make_response
 from requests import session
+from extensions import webtoons
 
 con = sqlite3.connect("./data.db")
 
 registry = Registry()
+registry.register(webtoons.Ext(con))
 
 app = Flask(__name__)
 
@@ -20,7 +22,7 @@ def gallery(ext_handle: str, id: int):
         return render_template("error.html")
     else:
         gallery = registry.getExtension(ext_handle).fetchGallery(id)
-        return render_template("gallery.html", gallery=gallery)
+        return render_template("gallery.html", gallery=gallery, ext_handle=ext_handle, id=id)
 
 
 @app.get("/@<ext_handle>/v/<id>")

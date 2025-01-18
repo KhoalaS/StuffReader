@@ -1,13 +1,13 @@
 {% extends "base.html" %} {% block body %}
 <div class="m-4">
     <div class="flex justify-start">
-        <div>
+        <div class="w-full">
             <h1 class="text-xl font-bold">{{gallery.title}}</h1>
             <a href="about:blank" class="underline">#{{gallery.id}}</a>
-            <img src="{{gallery.thumbnail}}" />
+            <img class="w-full" src="{{gallery.thumbnail}}" />
             <div class="flex flex-col gap-4 my-4">
                 {% for label, tag_list in gallery.tags.items() %}
-                <div class="flex gap-2">
+                <div class="flex gap-2 items-center">
                     <span class="font-bold">{{label}}:</span>
                     <div class="flex gap-1 flex-wrap">
                         {%for tag in tag_list %}
@@ -23,34 +23,38 @@
                 {% endfor %}
             </div>
             {% if gallery.has_chapters %}
-            <div>Chapters: {{gallery.chapters|length}}</div>
+            <div class="font-bold">Chapters: {{gallery.chapters|length}}</div>
             <div class="overflow-y-scroll h-[400px]">
                 {% for chapter in gallery.chapters%}
-                <div
-                    class="pl-4 py-4 text-lg border-b-2 border-white hover:bg-white hover:text-black hover:cursor-pointer duration-100"
-                >
-                    {{chapter.title}}
-                </div>
+                <a href="/@{{ext_handle}}/v/{{id}}?chapter={{chapter.id}}">
+                    <div
+                        class="pl-4 py-4 text-lg border-b-2 border-white hover:bg-white hover:text-black hover:cursor-pointer duration-100"
+                    >
+                        {{chapter.title}}
+                    </div>
+                </a>
                 {% endfor %}
             </div>
             {% else %}
             <div>Pages: {{gallery.pages}}</div>
             {% endif %}
-            <button
-                class="items-center bg-white text-black rounded-md px-4 py-2"
-            >
-                <img
-                    class="inline-block"
-                    src="/static/svg/filled/player-play.svg"
-                />
-                <span>Start</span>
-            </button>
-            <button class="bg-white text-black rounded-md px-4 py-2">
-                Bookmark
-            </button>
-            <button class="bg-white text-black rounded-md px-4 py-2">
-                Read
-            </button>
+            <div class="mt-4">
+                <button
+                    class="items-center bg-white text-black rounded-md px-4 py-2"
+                >
+                    <img
+                        class="inline-block"
+                        src="/static/svg/filled/player-play.svg"
+                    />
+                    <span>Start</span>
+                </button>
+                <button class="bg-white text-black rounded-md px-4 py-2">
+                    Bookmark
+                </button>
+                <button class="bg-white text-black rounded-md px-4 py-2">
+                    Completed
+                </button>
+            </div>
         </div>
     </div>
 </div>

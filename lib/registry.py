@@ -12,10 +12,7 @@ class Registry:
         return self._map.items()
 
     def getExtension(self, ext_handle: str):
-        for (k, ext) in self._map.items():
-            if ext.handle == ext_handle:
-                return ext
-        return None
+        return self._map.get(ext_handle)
 
     def register(self, ext: Extension):
         if self._map.get(ext.handle) is None:

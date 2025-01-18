@@ -1,19 +1,21 @@
 {% extends "base.html" %} {% block body %}
-<h2 class="font-bold text-lg">Galleries</h2>
-<div class="flex flex-col justify-start">
-    <div class="flex gap-2 mb-4">
-        {% for key, _filter in quick_filters.items() %}
-        <div
-            hx-trigger="click"
-            hx-target="#content"
-            hx-swap="innerHTML"
-            hx-get="/@{{handle}}/filter/{{key}}"
-            class="border rounded-full px-4 py-2 bg-white text-black"
-        >
-            {{_filter.label}}
+<div class="m-4">
+    <h2 class="font-bold text-lg">Galleries</h2>
+    <div class="flex flex-col justify-start">
+        <div class="flex gap-2 mb-4">
+            {% for key, _filter in quick_filters.items() %}
+            <div
+                hx-trigger="click"
+                hx-target="#content"
+                hx-swap="innerHTML"
+                hx-get="/@{{handle}}/filter/{{key}}"
+                class="border-2 border-white rounded-full px-4 py-2 bg-back text-white hover:bg-white hover:text-black duration-100 hover:cursor-pointer"
+            >
+                {{_filter.label}}
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+        <div id="content"></div>
     </div>
-    <div id="content"></div>
 </div>
 {% endblock %}

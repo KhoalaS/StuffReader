@@ -1,13 +1,19 @@
 {% extends "base.html" %} {% block body %}
-<h2 class="font-bold text-lg">Extensions</h2>
-<div class="flex justify-start">
-    <div>
-        {% for key,ext in extensions %}
-        <div class="flex flex-col items-center active:bg-slate-700">
-            <img class="w-32 h-32" src="{{ext.logo}}" />
-            <div>{{ext.domain}}</div>
+<div class="m-4">
+    <h2 class="font-bold text-lg">Extensions</h2>
+    <div class="flex justify-start">
+        <div>
+            {% for key,ext in extensions %}
+            <a href="/@{{ext.handle}}/home">
+                <div
+                    class="flex flex-col items-center hover:bg-white hover:text-black hover:pointer"
+                >
+                    <img class="w-32 h-32" src="{{ext.logo}}" />
+                    <div>{{ext.domain}}</div>
+                </div>
+            </a>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </div>
 {% endblock %}
